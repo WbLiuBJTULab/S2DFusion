@@ -1,21 +1,14 @@
 ## Installation
 
-### 1. Clone the Repository
 
-```bash
-git clone S2DFusion
-cd S2DFusion
-export S2D_ROOT=$PWD
-```
-
-### 2. Create the Environment
+### 1. Create the Environment
 
 ```bash
 conda create -n S2Dfusion python=3.8 -y
 conda activate S2Dfusion
 ```
 
-### 3. Install PyTorch and Dependencies
+### 2. Install PyTorch and Dependencies
 
 ```bash
 conda install pytorch==2.1.0 torchvision==0.16.0 torchaudio==2.1.0 \
@@ -27,7 +20,7 @@ pip install --no-cache-dir \
     numba==0.56.4
 ```
 
-### 4. Install Mamba
+### 3. Install Mamba
 
 ```bash
 cd "$S2D_ROOT/mamba"
