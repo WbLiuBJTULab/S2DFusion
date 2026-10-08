@@ -3,7 +3,7 @@
 ### 1. Clone the Repository
 
 ```bash
-git clone <YOUR_REPOSITORY_URL> S2DFusion
+git clone S2DFusion
 cd S2DFusion
 export S2D_ROOT=$PWD
 ```
@@ -21,40 +21,17 @@ conda activate S2Dfusion
 conda install pytorch==2.1.0 torchvision==0.16.0 torchaudio==2.1.0 \
     pytorch-cuda=11.8 -c pytorch -c nvidia
 
-pip install spconv-cu118
-pip install -r requirements.txt
-```
-
-Install the recommended versions for VoD evaluation:
-
-```bash
 pip install --no-cache-dir \
     numpy==1.23.5 \
     llvmlite==0.39.1 \
     numba==0.56.4
 ```
 
-### 4. Build OpenPCDet Extensions
-
-```bash
-export CUDA_HOME=/usr/local/cuda-11.8
-export PATH="$CUDA_HOME/bin:$PATH"
-
-cd "$S2D_ROOT"
-python setup.py develop
-```
-
-### 5. Install Mamba
+### 4. Install Mamba
 
 ```bash
 cd "$S2D_ROOT/mamba"
 pip install -e .
-```
-
-If the prebuilt wheel is unavailable:
-
-```bash
-MAMBA_FORCE_BUILD=TRUE pip install -e .
 ```
 
 ---
@@ -141,23 +118,6 @@ bash scripts/dist_train.sh 4 \
 
 ---
 
-## Evaluation
-
-Evaluate a trained checkpoint with:
-
-```bash
-cd "$S2D_ROOT/tools"
-
-CUDA_VISIBLE_DEVICES=0 python test.py \
-    --cfg_file cfgs/VoD_models/S2DFusion.yaml \
-    --batch_size 4 \
-    --workers 4 \
-    --extra_tag S2Dfusion_vod \
-    --ckpt /path/to/checkpoint.pth \
-    --eval_tag test
-```
-
----
 
 ## Acknowledgements
 
@@ -169,5 +129,3 @@ This repository is built upon the following open-source projects and datasets:
 - [View-of-Delft Dataset](https://github.com/tudelft-iv/view-of-delft-dataset)
 
 We sincerely thank the authors for making their code and datasets publicly available.
-
-Please follow the corresponding licenses and citation requirements when using this repository.
