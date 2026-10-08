@@ -1,56 +1,71 @@
-Installation
+## Installation
 
-1. Clone the repository
+### 1. Clone the Repository
 
+```bash
 git clone <YOUR_REPOSITORY_URL> S2DFusion
 cd S2DFusion
 export S2D_ROOT=$PWD
+```
 
-2. Create the environment
+### 2. Create the Environment
 
+```bash
 conda create -n S2Dfusion python=3.8 -y
 conda activate S2Dfusion
+```
 
-3. Install PyTorch and dependencies
+### 3. Install PyTorch and Dependencies
 
+```bash
 conda install pytorch==2.1.0 torchvision==0.16.0 torchaudio==2.1.0 \
     pytorch-cuda=11.8 -c pytorch -c nvidia
 
 pip install spconv-cu118
 pip install -r requirements.txt
+```
 
+Install the recommended versions for VoD evaluation:
+
+```bash
 pip install --no-cache-dir \
     numpy==1.23.5 \
     llvmlite==0.39.1 \
     numba==0.56.4
+```
 
-4. Build OpenPCDet extensions
+### 4. Build OpenPCDet Extensions
 
+```bash
 export CUDA_HOME=/usr/local/cuda-11.8
 export PATH="$CUDA_HOME/bin:$PATH"
 
 cd "$S2D_ROOT"
 python setup.py develop
+```
 
-5. Install Mamba
+### 5. Install Mamba
 
+```bash
 cd "$S2D_ROOT/mamba"
 pip install -e .
+```
 
 If the prebuilt wheel is unavailable:
 
+```bash
 MAMBA_FORCE_BUILD=TRUE pip install -e .
+```
 
+---
 
+## VoD Dataset Preparation
 
-VoD Dataset Preparation
+Download the **View-of-Delft (VoD)** dataset following the official instructions.
 
-Download the View-of-Delft dataset following the official instructions:
+The expected directory structure is:
 
-View-of-Delft Dataset
-
-The expected data structure is:
-
+```text
 rlfusion_5f/
 ├── ImageSets/
 │   ├── train.txt
@@ -64,37 +79,41 @@ rlfusion_5f/
 │   ├── radar_5f/
 │   └── radar_calib/
 └── testing/
+```
 
-The input point formats are:
+Input point formats:
 
-LiDAR: x, y, z, intensity
+- **LiDAR:** `x, y, z, intensity`
+- **4D Radar:** `x, y, z, rcs, v_r, v_r_comp, time`
 
-Radar: x, y, z, rcs, v_r, v_r_comp, time
+Generate the dataset information files and ground-truth database:
 
-
-Then generate the dataset information files and ground-truth database:
-
+```bash
 cd "$S2D_ROOT"
 
 python -m pcdet.datasets.vod.vod_dataset \
     create_vod_infos tools/cfgs/dataset_configs/Vod_fusion.yaml
+```
 
-The generated files should include:
+The following files will be generated:
 
+```text
 vod_infos_train.pkl
 vod_infos_val.pkl
 vod_infos_trainval.pkl
 vod_dbinfos_train.pkl
 gt_database/
+```
 
+---
 
+## Training
 
-Training
+All training commands should be executed from the `tools/` directory.
 
-All training commands should be executed from the tools/ directory.
+### Single-GPU Training
 
-Single GPU
-
+```bash
 cd "$S2D_ROOT/tools"
 
 CUDA_VISIBLE_DEVICES=0 python train.py \
@@ -102,11 +121,13 @@ CUDA_VISIBLE_DEVICES=0 python train.py \
     --batch_size 4 \
     --workers 8 \
     --extra_tag S2Dfusion_vod
+```
 
-Multi-GPU
+### Multi-GPU Training
 
-Example with four GPUs:
+Example using four GPUs:
 
+```bash
 cd "$S2D_ROOT/tools"
 
 export CUDA_VISIBLE_DEVICES=0,1,2,3
@@ -116,11 +137,15 @@ bash scripts/dist_train.sh 4 \
     --batch_size 4 \
     --workers 8 \
     --extra_tag S2Dfusion_vod
+```
 
-Evaluation
+---
 
-Evaluate a checkpoint using:
+## Evaluation
 
+Evaluate a trained checkpoint with:
+
+```bash
 cd "$S2D_ROOT/tools"
 
 CUDA_VISIBLE_DEVICES=0 python test.py \
@@ -130,21 +155,19 @@ CUDA_VISIBLE_DEVICES=0 python test.py \
     --extra_tag S2Dfusion_vod \
     --ckpt /path/to/checkpoint.pth \
     --eval_tag test
+```
 
+---
 
-    Acknowledgements
+## Acknowledgements
 
-This repository is built upon the following open-source projects:
+This repository is built upon the following open-source projects and datasets:
 
-S2DFusion
+- [OpenPCDet](https://github.com/open-mmlab/OpenPCDet)
+- [Mamba](https://github.com/state-spaces/mamba)
+- [spconv](https://github.com/traveller59/spconv)
+- [View-of-Delft Dataset](https://github.com/tudelft-iv/view-of-delft-dataset)
 
-OpenPCDet
+We sincerely thank the authors for making their code and datasets publicly available.
 
-Mamba
-
-spconv
-
-View-of-Delft Dataset
-
-Please follow the licenses and citation requirements of the original projects and datasets when using this repository.
-    
+Please follow the corresponding licenses and citation requirements when using this repository.
